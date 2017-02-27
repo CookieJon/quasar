@@ -6,7 +6,7 @@ You can join them in supporting Quasar development by [pledging on Patreon](http
 
 ### $2000
 
-Currently vacant. It could be you!
+Currently vacant. It could be you or your organization!
 
 ---
 
@@ -43,14 +43,17 @@ It could be you!
 - Marek Urbanowicz
 - Samuel Lin
 - Andrea Salvatore
+- Matsumoto Takamasa
+- Keith Bailey
+- Borris Barroso
+- Sven Delueg
+- Josh Bodine
 
 ---
 
-### One time
+### Notable one time
 
 - Robert Preston $250
 - Remo Laubacher $200
 - Musicformellons $100
 - Gerard Eviston $50
-- Mickaël Le Normand $15
-- Tommy Carlsson $10

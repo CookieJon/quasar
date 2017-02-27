@@ -1,18 +1,21 @@
 $tabs-order                   ?= 9
-$tabs-padding                 ?= 8px 20px
-$tabs-big-screen-side-padding ?= 12px
+$tabs-padding                 ?= 4px 10px
 $tabs-color                   ?= $toolbar-faded-color
 $tabs-active-color            ?= $toolbar-color
 $tabs-background              ?= $toolbar-background
 $tabs-highlight-color         ?= opposite-non-color($tabs-background)
-$tabs-container-border-bottom ?= 1px solid $grey-3
-$tabs-min-height              ?= 61px
 
-$tabs-font-size               ?= .95rem
-$tabs-icon-font-size          ?= 1.7rem
+$tabs-min-height              ?= 49px
+$tabs-font-size               ?= .9rem
+$tabs-icon-font-size          ?= 1.5rem
 $tabs-font-weight             ?= 400
-$tabs-label-margin            ?= 5px 0 0 0
-$tabs-label-font-size         ?= .7rem
+$tabs-label-margin            ?= 0
+
+$tabs-big-window-min-height      ?= 68px
+$tabs-big-window-font-size       ?= 1.2rem
+$tabs-big-window-icon-font-size  ?= 2rem
+$tabs-big-window-font-weight     ?= 400
+$tabs-big-window-label-margin    ?= 20px
 
 .q-tabs-scroller
   overflow hidden
@@ -27,29 +30,24 @@ $tabs-label-font-size         ?= .7rem
   white-space nowrap
   user-select none
 
-  .q-tabs-icon
-    font-size $tabs-icon-font-size
-  .q-tabs-icon + .q-tab-label
-    margin $tabs-label-margin
   &.active
     color $tabs-active-color
   &:active
     background $tabs-highlight-color
 
-@media only screen and (max-width $layout-medium-max)
-  .q-tabs:not(.scrollable)
-    .q-tabs-scroller, .q-tab
-      flex 1 1 auto
+.q-tabs-icon
+  font-size $tabs-icon-font-size
+  & + .q-tab-label
+    margin $tabs-label-margin
 
 .q-tabs
-  min-height $tabs-min-height
   overflow hidden
   color $tabs-color
   background $tabs-background
+  min-height $tabs-min-height
   font-size $tabs-font-size
   font-weight $tabs-font-weight
   transition color .18s ease-in, box-shadow .18s ease-in
-  border-radius $generic-border-radius
   position relative
   justify-content center
 
@@ -68,11 +66,6 @@ $tabs-label-font-size         ?= .7rem
 
     &.disabled
       visibility hidden
-
-  .left-scroll
-    left 0
-  .right-scroll
-    right 0
 
   .left-scroll
     left 0
@@ -127,5 +120,26 @@ $tabs-label-font-size         ?= .7rem
 body.mobile .q-tabs-scroller
   overflow-y hidden
   overflow-x auto
-  -webkit-overflow-scrolling touch
   will-change scroll-position
+  -webkit-overflow-scrolling touch
+
+@media only screen and (max-width $layout-small-max)
+  .q-tab
+    &.hideIcon .q-tabs-icon,
+    &.hideLabel .q-tab-label
+      display none !important
+
+@media only screen and (max-width $layout-medium-max)
+  .q-tabs:not(.scrollable)
+    .q-tabs-scroller, .q-tab
+      flex 1 1 auto
+
+@media only screen and (min-width $layout-big-min)
+  .q-tab, .q-tabs
+    min-height $tabs-big-window-min-height
+  .q-tabs-icon
+    font-size $tabs-big-window-icon-font-size
+  .q-tabs
+    min-height $tabs-big-window-min-height
+    font-size $tabs-big-window-font-size
+    font-weight $tabs-big-window-font-weight

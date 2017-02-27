@@ -108,8 +108,8 @@ export default {
       if (this.position) {
         return Utils.extend(
           {},
-          positionCSS[this.$quasar.theme],
-          additionalCSS(this.$quasar.theme, this.position),
+          positionCSS[this.$q.theme],
+          additionalCSS(this.$q.theme, this.position),
           this.contentCss
         )
       }
@@ -122,13 +122,10 @@ export default {
         throw new Error('Modal cannot be minimized & maximized simultaneously.')
       }
       if (this.active) {
-        onShow && onShow()
         return
       }
 
-      this.$el.parentNode.removeChild(this.$el)
-      document.body.append(this.$el)
-
+      document.body.appendChild(this.$el)
       document.body.classList.add('with-modal')
       EscapeKey.register(() => {
         if (this.noEscDismiss) {
@@ -193,7 +190,6 @@ export default {
     },
     close (onClose) {
       if (!this.active) {
-        onClose && onClose()
         return
       }
 
@@ -222,7 +218,9 @@ export default {
     }
   },
   beforeDestroy () {
-    this.$el.parentNode.removeChild(this.$el)
+    if (this.$el.parentNode) {
+      this.$el.parentNode.removeChild(this.$el)
+    }
   }
 }
 </script>

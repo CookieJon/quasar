@@ -20,6 +20,7 @@ export default {
       default: 'top left',
       validator: Utils.popup.positionValidator
     },
+    fit: Boolean,
     maxHeight: String,
     touchPosition: Boolean,
     anchorClick: {
@@ -53,6 +54,11 @@ export default {
       return Utils.popup.parsePosition(this.self)
     }
   },
+  created () {
+    this.__debouncedPositionUpdate = Utils.debounce(() => {
+      this.reposition()
+    }, 70)
+  },
   mounted () {
     this.$nextTick(() => {
       this.anchorEl = this.$el.parentNode
@@ -79,7 +85,11 @@ export default {
       }
     },
     open (event) {
-      if (this.disable || this.opened) {
+      if (this.disable) {
+        return
+      }
+      if (this.opened) {
+        this.reposition()
         return
       }
       if (event) {
@@ -93,10 +103,14 @@ export default {
       EscapeKey.register(() => { this.close() })
       this.scrollTarget = Utils.dom.getScrollTarget(this.anchorEl)
       this.scrollTarget.addEventListener('scroll', this.close)
+      window.addEventListener('resize', this.__debouncedPositionUpdate)
+      if (this.fit) {
+        this.$el.style.minWidth = Utils.dom.width(this.anchorEl) + 'px'
+      }
+      this.reposition(event)
       this.timer = setTimeout(() => {
         this.timer = null
         document.addEventListener('click', this.close, true)
-        this.__updatePosition(event)
         this.$emit('open')
       }, 1)
     },
@@ -108,6 +122,7 @@ export default {
       clearTimeout(this.timer)
       document.removeEventListener('click', this.close, true)
       this.scrollTarget.removeEventListener('scroll', this.close)
+      window.removeEventListener('resize', this.__debouncedPositionUpdate)
       EscapeKey.pop()
       this.progress = true
 
@@ -125,17 +140,19 @@ export default {
         }
       }, 1)
     },
-    __updatePosition (event) {
-      Utils.popup.setPosition({
-        event,
-        el: this.$el,
-        offset: this.offset,
-        anchorEl: this.anchorEl,
-        anchorOrigin: this.anchorOrigin,
-        selfOrigin: this.selfOrigin,
-        maxHeight: this.maxHeight,
-        anchorClick: this.anchorClick,
-        touchPosition: this.touchPosition
+    reposition (event) {
+      this.$nextTick(() => {
+        Utils.popup.setPosition({
+          event,
+          el: this.$el,
+          offset: this.offset,
+          anchorEl: this.anchorEl,
+          anchorOrigin: this.anchorOrigin,
+          selfOrigin: this.selfOrigin,
+          maxHeight: this.maxHeight,
+          anchorClick: this.anchorClick,
+          touchPosition: this.touchPosition
+        })
       })
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="q-data-table shadow-1">
+  <div class="q-data-table">
     <template v-if="hasToolbar && toolbar === ''">
       <div class="q-data-table-toolbar upper-toolbar row reverse-wrap items-center justify-end">
         <div v-if="config.title" class="q-data-table-title ellipsis auto" v-html="config.title"></div>
@@ -25,8 +25,10 @@
 
     <div class="q-data-table-toolbar upper-toolbar row reverse-wrap items-center justify-end q-data-table-selection" v-show="toolbar === 'selection'">
       <div class="auto">
-        {{ rowsSelected }} item<span v-show="rowsSelected > 1">s</span> selected.
-        <button class="primary clear small" @click="clearSelection()">Clear</button>
+        {{ rowsSelected }}
+        <span v-if="rowsSelected === 1">{{ labels.selected.singular }}</span>
+        <span v-else>{{ labels.selected.plural }}</span>
+        <button class="primary clear small" @click="clearSelection()">{{ labels.clear }}</button>
       </div>
       <div>
         <slot name="selection" :rows="selectedRows"></slot>
@@ -226,7 +228,7 @@ export default {
       this.pagination.page = 1
     },
     format (row, col) {
-      return col.format ? col.format(row[col.field]) : row[col.field]
+      return col.format ? col.format(row[col.field], row) : row[col.field]
     },
     refresh (state) {
       if (state === false) {

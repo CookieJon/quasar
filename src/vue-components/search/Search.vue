@@ -5,23 +5,37 @@
   >
     <div class="q-search-input-container">
       <button class="q-search-icon">
-        <i>{{ icon }}</i>
-        <span v-show="$quasar.theme === 'ios' && this.value === '' && !hasText">{{placeholder}}</span>
+        <i class="on-left">{{ icon }}</i>
+        <span v-show="$q.theme === 'ios' && isEmpty">{{placeholder}}</span>
       </button>
       <input
+        v-if="numeric"
+        type="number"
+        pattern="[0-9]*"
+        class="q-search-input no-style"
+        :placeholder="$q.theme === 'mat' ? placeholder : ''"
+        v-model="model"
+        @focus="focus"
+        @blur="blur"
+        :disabled="disable"
+        :readonly="readonly"
+        tabindex="0"
+      >
+      <input
+        v-else
         type="text"
         class="q-search-input no-style"
-        :placeholder="$quasar.theme === 'mat' ? placeholder : ''"
+        :placeholder="$q.theme === 'mat' ? placeholder : ''"
         v-model="model"
-        @focus="focus()"
-        @blur="blur()"
+        @focus="focus"
+        @blur="blur"
         :disabled="disable"
         :readonly="readonly"
         tabindex="0"
       >
       <button
         class="q-search-clear"
-        @click="clear()"
+        @click="clear"
         :class="{hidden: this.model === ''}"
       >
         <i class="mat-only">clear</i>
@@ -32,14 +46,13 @@
 </template>
 
 <script>
-import Utils from '../../utils'
-
 export default {
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
+    numeric: Boolean,
     debounce: {
       type: Number,
       default: 300
@@ -58,44 +71,46 @@ export default {
   data () {
     return {
       focused: false,
-      hasText: this.value.length > 0
-    }
-  },
-  watch: {
-    debounce (value) {
-      this.__createDebouncedTrigger(value)
+      timer: null,
+      isEmpty: !this.value && this.value !== 0
     }
   },
   computed: {
     model: {
       get () {
-        this.hasText = this.value.length > 0
+        this.isEmpty = !this.value && this.value !== 0
         return this.value
       },
       set (value) {
-        this.hasText = value.length > 0
-        this.__update(value)
+        clearTimeout(this.timer)
+        this.isEmpty = !value && value !== 0
+        if (this.value === value) {
+          return
+        }
+        if (this.isEmpty) {
+          this.$emit('input', '')
+          return
+        }
+        this.timer = setTimeout(() => {
+          this.$emit('input', value)
+        }, this.debounce)
       }
     },
     centered () {
       return !this.focused && this.value === ''
+    },
+    editable () {
+      return !this.disable && !this.readonly
     }
   },
   methods: {
     clear () {
-      if (!this.disable && !this.readonly) {
-        this.$emit('input', '')
+      if (this.editable) {
+        this.model = ''
       }
     },
-    __createDebouncedTrigger (debounce) {
-      this.__update = Utils.debounce(value => {
-        if (this.value !== value) {
-          this.$emit('input', value)
-        }
-      }, debounce)
-    },
     focus () {
-      if (!this.disable && !this.readonly) {
+      if (this.editable) {
         this.focused = true
       }
     },
@@ -103,8 +118,8 @@ export default {
       this.focused = false
     }
   },
-  created () {
-    this.__createDebouncedTrigger(this.debounce)
+  beforeDestroy () {
+    clearTimeout(this.timer)
   }
 }
 </script>

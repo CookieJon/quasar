@@ -1,5 +1,9 @@
+$datatable-border    ?= 1px solid $grey-4
+$datatable-font-size ?= 85%
+
 .q-data-table
-  font-size 85%
+  font-size $datatable-font-size
+  border $datatable-border
   table
     width 100%
     table-layout fixed
@@ -24,7 +28,7 @@
       border-bottom 2px solid $grey-5 !important
 
 .q-data-table-toolbar
-  padding 5px 24px
+  padding 5px 10px
   font-weight 300
   &.upper-toolbar
     min-height 50px
